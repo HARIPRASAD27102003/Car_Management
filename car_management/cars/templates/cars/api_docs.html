@@ -1,0 +1,101 @@
+{% extends 'cars/base.html' %}
+{% block title %}API Documentation{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">API Documentation</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="list-group">
+                {% for api in api_data %}
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            <strong>Endpoint:</strong> <code>{{ api.endpoint }}</code> <br>
+                            <strong>Method:</strong> {{ api.method }}
+                        </h4>
+                        <p><strong>Description:</strong> {{ api.description }}</p>
+                        <p><strong>Authentication:</strong> {{ api.authentication }}</p>
+
+                        {% if api.request_params %}
+                            <div class="mt-3">
+                                <h5>Request Parameters</h5>
+                                <pre class="bg-light p-3 rounded"><code>{{ api.request_params_pretty }}</code></pre>
+                            </div>
+                        {% endif %}
+
+                        {% if api.response %}
+                            <div class="mt-3">
+                                <h5>Response Structure</h5>
+                                <pre class="bg-light p-3 rounded"><code>{{ api.response_pretty }}</code></pre>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h1 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .list-group-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 20px;
+        background-color: #ffffff;
+    }
+
+    .list-group-item-heading {
+        font-size: 18px;
+        color: #34495e;
+    }
+
+    pre {
+        background-color: #f7f7f7;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 14px;
+        overflow-x: auto;
+    }
+
+    .bg-light {
+        background-color: #f9f9f9 !important;
+    }
+
+    code {
+        font-size: 14px;
+        color: #d9534f;
+    }
+
+    .btn {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    footer {
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        margin-top: 30px;
+    }
+
+    footer p {
+        margin: 0;
+    }
+</style>
+{% endblock %}

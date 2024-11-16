@@ -1,9 +1,10 @@
 # cars/urls.py
-from django.urls import path
+from django.urls import path,re_path
 from django.conf import settings
 from .views import logout_view, login_view, profile_view
 from . import views
-from django.conf.urls.static import static
+from rest_framework import permissions
+
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -17,4 +18,6 @@ urlpatterns = [
     path('car/<int:car_id>/', views.car_detail, name='car_detail'),
     path('car/<int:car_id>/delete/', views.delete_car, name='delete_car'),
     path('car/<int:car_id>/update/', views.update_car_view, name='update_car'),
+    path('api/docs/', views.api_docs, name='api_docs'),
+
 ]

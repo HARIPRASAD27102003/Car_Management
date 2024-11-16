@@ -1,4 +1,3 @@
-# cars/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
@@ -23,6 +22,14 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Car, CarImage
 from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render
+import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def generate_otp():
@@ -43,7 +50,7 @@ def send_otp_email(email, otp):
             subject="Your OTP Code",
             plain_text_content=f"Your OTP is {otp}. Please use this to verify your account."
         )
-        sg = SendGridAPIClient(api_key="Your API KEY")
+        sg = SendGridAPIClient(api_key=os.getenv('API_KEY'))
         response = sg.send(message)
         print(f"Email sent successfully. Status code: {response.status_code}")
     except Exception as e:
@@ -271,3 +278,188 @@ def car_detail(request, car_id):
 
     # Pass car data to the template
     return render(request, 'cars/car_detail.html', {'car': car_data})
+
+
+def api_docs(request):
+    api_data = [
+        {
+            "endpoint": "/register/",
+            "method": "POST",
+            "description": "Register a new user.",
+            "authentication": "No authentication required.",
+            "request_params": {
+                "body": {
+                    "email": "string, required",
+                    "password": "string, required"
+                }
+            },
+            "response": {
+                "201": {
+                    "message": "User registered successfully",
+                    "data": {"user_id": "int"}
+                },
+                "400": {"error": "Validation failed"}
+            }
+        },
+        {
+            "endpoint": "/verify_otp/",
+            "method": "POST",
+            "description": "Verify OTP for user registration.",
+            "authentication": "No authentication required.",
+            "request_params": {
+                "body": {
+                    "email": "string, required",
+                    "otp": "string, required"
+                }
+            },
+            "response": {
+                "200": {"message": "OTP verified successfully"},
+                "400": {"error": "Invalid OTP"}
+            }
+        },
+        {
+            "endpoint": "/login/",
+            "method": "POST",
+            "description": "Login an existing user.",
+            "authentication": "No authentication required.",
+            "request_params": {
+                "body": {
+                    "email": "string, required",
+                    "password": "string, required"
+                }
+            },
+            "response": {
+                "200": {"message": "Login successful", "token": "JWT token"},
+                "401": {"error": "Invalid credentials"}
+            }
+        },
+        {
+            "endpoint": "/profile/",
+            "method": "GET",
+            "description": "Retrieve the logged-in user's profile.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"}
+            },
+            "response": {
+                "200": {"data": {"email": "string", "joined_at": "datetime"}},
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/logout/",
+            "method": "POST",
+            "description": "Logout the logged-in user.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"}
+            },
+            "response": {
+                "200": {"message": "Logout successful"},
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/list-cars/",
+            "method": "GET",
+            "description": "Retrieve a list of all cars belonging to the logged-in user.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"}
+            },
+            "response": {
+                "200": {
+                    "data": [
+                        {"id": "int", "title": "string", "description": "string", "tags": "string"}
+                    ]
+                },
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/add-car/",
+            "method": "POST",
+            "description": "Add a new car.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"},
+                "body": {
+                    "title": "string, required",
+                    "description": "string, required",
+                    "tags": "string, optional",
+                    "images": "list of files, optional"
+                }
+            },
+            "response": {
+                "201": {"message": "Car created successfully", "car_id": "int"},
+                "400": {"error": "Validation error"},
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/car/<int:car_id>/",
+            "method": "GET",
+            "description": "Retrieve details of a specific car.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"},
+                "path_params": {"car_id": "int, required"}
+            },
+            "response": {
+                "200": {
+                    "data": {
+                        "id": "int",
+                        "title": "string",
+                        "description": "string",
+                        "tags": "string",
+                        "images": ["base64-encoded images"]
+                    }
+                },
+                "404": {"error": "Car not found"},
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/car/<int:car_id>/update/",
+            "method": "PUT",
+            "description": "Update details of a specific car.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"},
+                "path_params": {"car_id": "int, required"},
+                "body": {
+                    "title": "string, optional",
+                    "description": "string, optional",
+                    "tags": "string, optional",
+                    "images": "list of files, optional"
+                }
+            },
+            "response": {
+                "200": {"message": "Car updated successfully"},
+                "404": {"error": "Car not found"},
+                "401": {"error": "Unauthorized"}
+            }
+        },
+        {
+            "endpoint": "/car/<int:car_id>/delete/",
+            "method": "DELETE",
+            "description": "Delete a specific car.",
+            "authentication": "Required (JWT token in Authorization header).",
+            "request_params": {
+                "header": {"Authorization": "Bearer <JWT token>"},
+                "path_params": {"car_id": "int, required"}
+            },
+            "response": {
+                "200": {"message": "Car deleted successfully"},
+                "404": {"error": "Car not found"},
+                "401": {"error": "Unauthorized"}
+            }
+        }
+    ]
+
+    # Serialize API data to pretty JSON for the template
+    for api in api_data:
+        api['request_params_pretty'] = json.dumps(api.get('request_params', {}), indent=4)
+        api['response_pretty'] = json.dumps(api.get('response', {}), indent=4)
+
+    return render(request, 'cars/api_docs.html', {'api_data': api_data})

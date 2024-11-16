@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from rest_framework.authentication import TokenAuthentication
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +47,16 @@ ALLOWED_HOSTS = []
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,6 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cars',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
