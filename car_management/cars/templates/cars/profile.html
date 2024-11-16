@@ -1,0 +1,13 @@
+{% extends 'cars/base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header text-center">
+        <h4>Welcome, {{ user.username }}</h4>
+    </div>
+    <div class="card-body text-center">
+        <p>Email: {{ user.email }}</p>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+{% endblock %}

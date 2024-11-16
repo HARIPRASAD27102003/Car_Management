@@ -1,0 +1,65 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+    <h2>Update Car - {{ car.title }}</h2>
+
+    <!-- Display the current car details with form fields for updating -->
+    <form action="{% url 'update_car' car.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Car Title -->
+        <div class="form-group">
+            <label for="id_title">Title:</label>
+            <input type="text" name="title" id="id_title" class="form-control" value="{{ car.title }}">
+        </div>
+
+        <!-- Car Description -->
+        <div class="form-group">
+            <label for="id_description">Description:</label>
+            <textarea name="description" id="id_description" class="form-control">{{ car.description }}</textarea>
+        </div>
+
+        <!-- Car Tags -->
+        <div class="form-group">
+            <label for="id_tags">Tags:</label>
+            <input type="text" name="tags" id="id_tags" class="form-control" value="{{ car.tags }}">
+        </div>
+
+        <!-- Current Car Images -->
+        <h3>Current Images:</h3>
+        <div class="car-images" style="display: flex; gap: 10px;">
+            {% for image in car.images %}
+                <div>
+                    <img src="data:image/jpeg;base64,{{ image.encoded_image }}" alt="Car Image" width="150" height="150">
+                    <div>
+                        <label>
+                            <input type="checkbox" name="delete_images" value="{{ image.id }}">
+                            Delete Image
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- New Images -->
+        <div class="form-group">
+            <label for="id_images">Upload New Images:</label>
+            <input type="file" name="images" id="id_images" class="form-control" multiple>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Update Car</button>
+    </form>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px;">
+        <!-- Back to List Button -->
+        <a href="{% url 'list_cars' %}" class="btn btn-secondary">Back to List</a>
+
+        <!-- Delete Button -->
+        <form action="{% url 'delete_car' car.id %}" method="post" style="display: inline-block; margin-left: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete Car</button>
+        </form>
+    </div>
+{% endblock %}

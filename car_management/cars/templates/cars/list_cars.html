@@ -1,0 +1,33 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+    <h2 align="center">Car List</h2>
+
+    <!-- Search Bar Form -->
+    <form method="get" action="{% url 'list_cars' %}" class="mb-4" style="text-align: center;">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search cars..." class="form-control" style="width: 300px; display: inline-block;">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <div class="car-list">
+        {% if cars %}
+            {% for car in cars %}
+                <div class="car-item">
+                    <h4>{{ car.title }}</h4>
+                    
+                    <!-- Render Single Base64 Image -->
+                    {% if car.image %}
+                        <img src="data:image/jpeg;base64,{{ car.image }}" alt="{{ car.title }}" width="150" height="150">
+                    {% endif %}
+
+                    <!-- View Details Button -->
+                    <form action="{% url 'car_detail' car.id %}" method="get" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">View Details</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No cars found matching your search query.</p>
+        {% endif %}
+    </div>
+{% endblock %}

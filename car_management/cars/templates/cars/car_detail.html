@@ -1,0 +1,32 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+    <h2>{{ car.title }}</h2>
+    <p>{{ car.description }}</p>
+    <p><strong>Tags:</strong> {{ car.tags }}</p>
+    <p><strong>Created At:</strong> {{ car.created_at }}</p>
+
+    <!-- Display all images side by side, enlarged -->
+    <div class="car-images" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+        {% for image in car.images %}
+            <div style="margin: 10px;">
+                <img src="data:image/jpeg;base64,{{ image.encoded_image }}" alt="Car Image" style="max-width: 400px; max-height: 400px; object-fit: cover;">
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px;">
+        <!-- Back to List Button -->
+        <a href="{% url 'list_cars' %}" class="btn btn-secondary">Back to List</a>
+
+        <!-- Update Button -->
+        <a href="{% url 'update_car' car.id %}" class="btn btn-primary" style="margin-left: 10px;">Update Car</a>
+
+        <!-- Delete Button -->
+        <form action="{% url 'delete_car' car.id %}" method="post" style="display: inline-block; margin-left: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete Car</button>
+        </form>
+    </div>
+{% endblock %}

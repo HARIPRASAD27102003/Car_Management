@@ -1,0 +1,18 @@
+{% extends 'cars/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="jumbotron text-center">
+            <h1>Welcome to Car Management</h1>
+            <p class="lead">Manage your cars easily!</p>
+            <a href="{% url 'list_cars' %}" class="btn btn-primary">View My Cars</a>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h1>Welcome to Car Management</h1>
+            <p class="lead">To manage your cars, please log in first.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-secondary" style="margin-left: 10px;">Register</a>
+        </div>
+    {% endif %}
+{% endblock %}
