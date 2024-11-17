@@ -43,7 +43,7 @@ DEFAULT_FROM_EMAIL = '27102003hari@gmail.com'
 
 AUTH_USER_MODEL = 'cars.User'
 
-ALLOWED_HOSTS = ['https://wealthy-lilyan-hari2710-285f1dc9.koyeb.app/','127.0.0.1', 'http://127.0.0.1:8000/']
+ALLOWED_HOSTS = ['https://wealthy-lilyan-hari2710-285f1dc9.koyeb.app/']
 
 
 MEDIA_URL = '/media/'
