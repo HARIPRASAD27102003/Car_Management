@@ -43,7 +43,7 @@ DEFAULT_FROM_EMAIL = '27102003hari@gmail.com'
 
 AUTH_USER_MODEL = 'cars.User'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 MEDIA_URL = '/media/'
