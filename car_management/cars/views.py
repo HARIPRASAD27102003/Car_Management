@@ -31,7 +31,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def generate_otp():
     # Generate a 6-digit OTP
     return random.randint(100000, 999999)

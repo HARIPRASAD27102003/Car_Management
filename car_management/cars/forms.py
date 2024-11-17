@@ -77,7 +77,7 @@ class UserForm(forms.Form):
 
 
 class CarForm(forms.ModelForm):
-    images = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
+    images = forms.FileField(widget=forms.ClearableFileInput(attrs={'allow_multiple_selected': True}), required=False)
 
     class Meta:
         model = Car
