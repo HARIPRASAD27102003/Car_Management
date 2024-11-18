@@ -14,3 +14,4 @@ Pillow
 mysql-connector-python
 # mysqlclient
 certifi
+environ

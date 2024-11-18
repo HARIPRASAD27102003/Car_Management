@@ -44,12 +44,18 @@ ssl._create_default_https_context = ssl._create_unverified_context
 def send_otp_email(email, otp):
     try:
         message = Mail(
-            from_email="27102003hari@gmail.com",
+            from_email="saivasanththallam@gmail.com",  # Ensure this is a verified email
             to_emails=email,
             subject="Your OTP Code",
             plain_text_content=f"Your OTP is {otp}. Please use this to verify your account."
         )
-        sg = SendGridAPIClient(api_key=os.getenv('API_KEY'))
+        
+        # Retrieve API key
+        api_key = os.getenv('API_KEY')
+        print(f"Retrieved API Key: {api_key}")
+        
+        # Initialize SendGrid client
+        sg = SendGridAPIClient(api_key)
         response = sg.send(message)
         print(f"Email sent successfully. Status code: {response.status_code}")
     except Exception as e:
@@ -64,19 +70,30 @@ def register(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            # Create and save the user directly
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                # If email exists, return a warning message
+                form.add_error('email', 'Email already exists. Please use a different email address.')
+                return render(request, 'cars/register.html', {'form': form})
+
+            # Generate OTP
             otp = generate_otp()  # Generate a 6-digit OTP
             hashed_password = make_password(password)  # Hash the password for security
             
-            # Create user with necessary fields
-            user = User.objects.create(
-                username=username,
-                email=email,
-                password=hashed_password,
-                is_active=False,  # Deactivate until email is verified
-                otp=otp,  # Store the OTP
-            )
-
+            try:
+                # Create the user
+                user = User.objects.create(
+                    username=username,
+                    email=email,
+                    password=hashed_password,
+                    is_active=False,  # Deactivate until email is verified
+                    otp=otp,  # Store the OTP
+                )
+            except Exception as e:
+                # Log the error and return an appropriate response
+                print(f"Error during user creation: {str(e)}")
+                return JsonResponse({'error': 'Failed to create user. Please try again later.'}, status=500)
+            
             # Send OTP to the user's email
             send_otp_email(email, otp)
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 from rest_framework.authentication import TokenAuthentication
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,15 +30,14 @@ SECRET_KEY = 'django-insecure-iphcq4qno!cde!35xrjh2+%o1i!v&pe+5k267%eow*m@6h$#_8
 DEBUG = False
 # DEBUG = True
 
+API_KEY = os.getenv('API_KEY', 'default_dummy_api_key')
 
-# Use SendGrid for email sending
-SENDGRID_API_KEY = 'Your API KEY'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-DEFAULT_FROM_EMAIL = '27102003hari@gmail.com'
+EMAIL_HOST_PASSWORD = API_KEY
+DEFAULT_FROM_EMAIL = 'saivasanththallam@gmail.com'
 
 
 
